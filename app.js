@@ -7,11 +7,20 @@ var request = require('request');
 
 app.set("view engine", "ejs");
 
-app.get("/results", function(req, res){
-	request('http://www.omdbapi.com/?s=golden&apikey=thewdb ', function(err, response, body) {
+
+app.get("/", function(req, res) {
+	res.render("search"); 
+})
+app.get("/results", function(req, res) {
+	var keyword = req.query.keyword;
+	var url = 'http://www.omdbapi.com/?s=' + keyword + '&apikey=thewdb';
+	request(url, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
 			var parsedBody = JSON.parse(body)
 			res.render("results", {body: parsedBody});
+		} else {
+			res.render("search");
+			console.log("There was an error in the search!");
 		}
 	});
 })
